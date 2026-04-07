@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Modules\Purchase\Entities\Purchase;
+use Modules\Sale\Entities\Sale;
 
 class PointTransaction extends Model
 {
@@ -12,7 +12,7 @@ class PointTransaction extends Model
 
     protected $fillable = [
         'loyalty_account_id',
-        'order_id',
+        'sale_id',
         'type',
         'points',
         'description',
@@ -28,8 +28,8 @@ class PointTransaction extends Model
         return $this->belongsTo(LoyaltyAccount::class, 'loyalty_account_id', 'id');
     }
 
-    public function order()
+    public function sale()
     {
-        return $this->belongsTo(Purchase::class, 'order_id', 'id');
+        return $this->belongsTo(Sale::class, 'sale_id', 'id');
     }
 }

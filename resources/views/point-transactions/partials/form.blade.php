@@ -38,12 +38,12 @@
 <div class="form-row">
     <div class="col-md-6">
         <div class="form-group">
-            <label for="order_id">Order (Purchase)</label>
-            <select class="form-control" name="order_id" id="order_id">
-                <option value="">No linked purchase</option>
-                @foreach($orders as $order)
-                    <option value="{{ $order->id }}" {{ (string) old('order_id', optional($pointTransaction ?? null)->order_id) === (string) $order->id ? 'selected' : '' }}>
-                        #{{ $order->id }} - {{ $order->reference }}
+            <label for="sale_id">Sale</label>
+            <select class="form-control" name="sale_id" id="sale_id">
+                <option value="">No linked sale</option>
+                @foreach($sales as $sale)
+                    <option value="{{ $sale->id }}" {{ (string) old('sale_id', optional($pointTransaction ?? null)->sale_id) === (string) $sale->id ? 'selected' : '' }}>
+                        #{{ $sale->id }} - {{ $sale->reference }}
                     </option>
                 @endforeach
             </select>

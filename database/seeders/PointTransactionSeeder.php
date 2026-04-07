@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\LoyaltyAccount;
 use App\Models\PointTransaction;
 use Illuminate\Database\Seeder;
-use Modules\Purchase\Entities\Purchase;
+use Modules\Sale\Entities\Sale;
 
 class PointTransactionSeeder extends Seeder
 {
@@ -35,7 +35,7 @@ class PointTransactionSeeder extends Seeder
 
             PointTransaction::create([
                 'loyalty_account_id' => $accounts->random()->id,
-                'order_id' => fake()->boolean(40) ? Purchase::query()->inRandomOrder()->value('id') : null,
+                'sale_id' => fake()->boolean(40) ? Sale::query()->inRandomOrder()->value('id') : null,
                 'type' => $type,
                 'points' => $points,
                 'description' => 'Seeded point transaction #' . $i,

@@ -23,7 +23,7 @@ class UpdatePointTransactionRequest extends FormRequest
     {
         return [
             'loyalty_account_id' => 'required|exists:loyalty_accounts,id',
-            'order_id' => 'nullable|exists:purchases,id',
+            'sale_id' => 'nullable|exists:sales,id',
             'type' => 'required|string|in:earn,redeem,expire,adjust',
             'points' => 'required|integer|not_in:0',
             'description' => 'nullable|string|max:1000',

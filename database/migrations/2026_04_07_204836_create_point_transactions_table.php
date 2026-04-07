@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('point_transactions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('loyalty_account_id');
-            $table->unsignedBigInteger('order_id')->nullable();
+            $table->unsignedBigInteger('sale_id')->nullable();
             $table->string('type');
             $table->integer('points');
             $table->text('description')->nullable();
@@ -26,9 +26,9 @@ return new class extends Migration
                 ->on('loyalty_accounts')
                 ->cascadeOnDelete();
 
-            $table->foreign('order_id')
+            $table->foreign('sale_id')
                 ->references('id')
-                ->on('purchases')
+                ->on('sales')
                 ->nullOnDelete();
 
             $table->index(['loyalty_account_id', 'type']);

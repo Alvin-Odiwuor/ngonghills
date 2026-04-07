@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use App\Models\LoyaltyAccount;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Modules\Purchase\Entities\Purchase;
+use Modules\Sale\Entities\Sale;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\PointTransaction>
@@ -28,7 +28,7 @@ class PointTransactionFactory extends Factory
 
         return [
             'loyalty_account_id' => LoyaltyAccount::query()->inRandomOrder()->value('id') ?? LoyaltyAccount::factory()->create()->id,
-            'order_id' => fake()->boolean(45) ? Purchase::query()->inRandomOrder()->value('id') : null,
+            'sale_id' => fake()->boolean(45) ? Sale::query()->inRandomOrder()->value('id') : null,
             'type' => $type,
             'points' => $points,
             'description' => fake()->sentence(8),

@@ -39,8 +39,8 @@
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong>Order:</strong>
-                        <div>{{ optional($pointTransaction->order)->reference ?? 'No linked purchase' }}</div>
+                        <strong>Sale:</strong>
+                        <div>{{ optional($pointTransaction->sale)->reference ?? 'No linked sale' }}</div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <strong>Expires At:</strong>

@@ -25,7 +25,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Loyalty Account</th>
-                                <th>Order</th>
+                                <th>Sale</th>
                                 <th>Type</th>
                                 <th>Points</th>
                                 <th>Expires</th>
@@ -42,7 +42,7 @@
                                             - {{ optional($transaction->loyaltyAccount->customer)->customer_name }}
                                         @endif
                                     </td>
-                                    <td>{{ optional($transaction->order)->reference ?? '-' }}</td>
+                                    <td>{{ optional($transaction->sale)->reference ?? '-' }}</td>
                                     <td><span class="badge badge-secondary">{{ ucfirst($transaction->type) }}</span></td>
                                     <td class="{{ $transaction->points >= 0 ? 'text-success' : 'text-danger' }} font-weight-bold">
                                         {{ $transaction->points >= 0 ? '+' : '' }}{{ $transaction->points }}

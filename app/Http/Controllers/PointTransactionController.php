@@ -6,7 +6,7 @@ use App\Http\Requests\StorePointTransactionRequest;
 use App\Http\Requests\UpdatePointTransactionRequest;
 use App\Models\LoyaltyAccount;
 use App\Models\PointTransaction;
-use Modules\Purchase\Entities\Purchase;
+use Modules\Sale\Entities\Sale;
 
 class PointTransactionController extends Controller
 {
@@ -15,7 +15,7 @@ class PointTransactionController extends Controller
      */
     public function index()
     {
-        $pointTransactions = PointTransaction::with(['loyaltyAccount.customer', 'order'])
+        $pointTransactions = PointTransaction::with(['loyaltyAccount.customer', 'sale'])
             ->latest()
             ->paginate(15);
 
@@ -28,9 +28,9 @@ class PointTransactionController extends Controller
     public function create()
     {
         $loyaltyAccounts = LoyaltyAccount::with('customer')->orderByDesc('id')->get();
-        $orders = Purchase::query()->latest()->limit(200)->get();
+        $sales = Sale::query()->latest()->limit(200)->get();
 
-        return view('point-transactions.create', compact('loyaltyAccounts', 'orders'));
+        return view('point-transactions.create', compact('loyaltyAccounts', 'sales'));
     }
 
     /**
@@ -50,7 +50,7 @@ class PointTransactionController extends Controller
      */
     public function show(PointTransaction $pointTransaction)
     {
-        $pointTransaction->load(['loyaltyAccount.customer', 'order']);
+        $pointTransaction->load(['loyaltyAccount.customer', 'sale']);
 
         return view('point-transactions.show', compact('pointTransaction'));
     }
@@ -61,9 +61,9 @@ class PointTransactionController extends Controller
     public function edit(PointTransaction $pointTransaction)
     {
         $loyaltyAccounts = LoyaltyAccount::with('customer')->orderByDesc('id')->get();
-        $orders = Purchase::query()->latest()->limit(200)->get();
+        $sales = Sale::query()->latest()->limit(200)->get();
 
-        return view('point-transactions.edit', compact('pointTransaction', 'loyaltyAccounts', 'orders'));
+        return view('point-transactions.edit', compact('pointTransaction', 'loyaltyAccounts', 'sales'));
     }
 
     /**
