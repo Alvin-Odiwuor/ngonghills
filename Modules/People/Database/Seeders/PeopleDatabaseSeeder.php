@@ -17,6 +17,6 @@ class PeopleDatabaseSeeder extends Seeder
     public function run()
     {
         Customer::factory()->count(100)->create();
-        Supplier::factory()->count(6)->create();
+        Supplier::factory()->count(100)->create();
     }
 }
