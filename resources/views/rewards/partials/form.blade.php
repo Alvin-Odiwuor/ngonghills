@@ -36,10 +36,26 @@
     </div>
     <div class="col-md-4">
         <div class="form-group">
+            <label for="product_id">Product</label>
+            <select class="form-control" name="product_id" id="product_id">
+                <option value="">No linked product</option>
+                @foreach(($products ?? collect()) as $product)
+                    <option value="{{ $product->id }}" {{ (string) old('product_id', optional($reward ?? null)->product_id) === (string) $product->id ? 'selected' : '' }}>
+                        {{ $product->product_name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
             <label for="stock">Stock</label>
             <input type="number" min="0" class="form-control" name="stock" id="stock" value="{{ old('stock', optional($reward ?? null)->stock) }}" placeholder="Leave blank for unlimited">
         </div>
     </div>
+</div>
+
+<div class="form-row">
     <div class="col-md-4">
         <div class="form-group">
             <label for="expires_at">Expires At</label>

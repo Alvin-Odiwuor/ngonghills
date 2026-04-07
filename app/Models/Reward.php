@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Modules\Product\Entities\Product;
 
 class Reward extends Model
 {
@@ -15,6 +16,7 @@ class Reward extends Model
         'points_required',
         'reward_type',
         'reward_value',
+        'product_id',
         'stock',
         'is_active',
         'expires_at',
@@ -28,5 +30,10 @@ class Reward extends Model
     public function redemptions()
     {
         return $this->hasMany(Redemption::class, 'reward_id', 'id');
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'product_id', 'id');
     }
 }

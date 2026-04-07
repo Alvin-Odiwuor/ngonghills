@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreRewardRequest;
 use App\Http\Requests\UpdateRewardRequest;
 use App\Models\Reward;
+use Modules\Product\Entities\Product;
 
 class RewardController extends Controller
 {
@@ -13,7 +14,7 @@ class RewardController extends Controller
      */
     public function index()
     {
-        $rewards = Reward::query()->latest()->paginate(15);
+        $rewards = Reward::query()->with('product')->latest()->paginate(15);
 
         return view('rewards.index', compact('rewards'));
     }
@@ -23,7 +24,9 @@ class RewardController extends Controller
      */
     public function create()
     {
-        return view('rewards.create');
+        $products = Product::query()->orderBy('product_name')->get(['id', 'product_name']);
+
+        return view('rewards.create', compact('products'));
     }
 
     /**
@@ -43,6 +46,8 @@ class RewardController extends Controller
      */
     public function show(Reward $reward)
     {
+        $reward->load('product');
+
         return view('rewards.show', compact('reward'));
     }
 
@@ -51,7 +56,9 @@ class RewardController extends Controller
      */
     public function edit(Reward $reward)
     {
-        return view('rewards.edit', compact('reward'));
+        $products = Product::query()->orderBy('product_name')->get(['id', 'product_name']);
+
+        return view('rewards.edit', compact('reward', 'products'));
     }
 
     /**

@@ -40,6 +40,10 @@
                         <div>{{ $reward->reward_value ?? '-' }}</div>
                     </div>
                     <div class="col-md-4 mb-3">
+                        <strong>Linked Product:</strong>
+                        <div>{{ optional($reward->product)->product_name ?? '-' }}</div>
+                    </div>
+                    <div class="col-md-4 mb-3">
                         <strong>Stock:</strong>
                         <div>{{ is_null($reward->stock) ? 'Unlimited' : $reward->stock }}</div>
                     </div>

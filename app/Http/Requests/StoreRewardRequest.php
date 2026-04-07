@@ -27,6 +27,7 @@ class StoreRewardRequest extends FormRequest
             'points_required' => 'required|integer|min:1',
             'reward_type' => 'required|string|in:discount,free_product,voucher,points,early access',
             'reward_value' => 'nullable|string|max:255',
+            'product_id' => 'nullable|integer|exists:products,id',
             'stock' => 'nullable|integer|min:0',
             'is_active' => 'required|boolean',
             'expires_at' => 'nullable|date',

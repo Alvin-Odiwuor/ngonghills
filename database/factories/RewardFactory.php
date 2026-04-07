@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\Product\Entities\Product;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Reward>
@@ -31,6 +32,7 @@ class RewardFactory extends Factory
             'points_required' => fake()->numberBetween(100, 5000),
             'reward_type' => $type,
             'reward_value' => $rewardValue,
+            'product_id' => fake()->boolean(50) ? Product::query()->inRandomOrder()->value('id') : null,
             'stock' => fake()->boolean(60) ? fake()->numberBetween(10, 500) : null,
             'is_active' => fake()->boolean(85),
             'expires_at' => fake()->boolean(40) ? now()->addDays(fake()->numberBetween(15, 365))->toDateString() : null,

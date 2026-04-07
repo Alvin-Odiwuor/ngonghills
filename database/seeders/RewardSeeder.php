@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Reward;
 use Illuminate\Database\Seeder;
+use Modules\Product\Entities\Product;
 
 class RewardSeeder extends Seeder
 {
@@ -31,6 +32,7 @@ class RewardSeeder extends Seeder
                 'points_required' => fake()->numberBetween(100, 5000),
                 'reward_type' => $type,
                 'reward_value' => $rewardValue,
+                'product_id' => fake()->boolean(50) ? Product::query()->inRandomOrder()->value('id') : null,
                 'stock' => fake()->boolean(60) ? fake()->numberBetween(10, 400) : null,
                 'is_active' => fake()->boolean(85),
                 'expires_at' => fake()->boolean(35)
