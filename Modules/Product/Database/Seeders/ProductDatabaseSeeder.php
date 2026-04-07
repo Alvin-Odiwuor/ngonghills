@@ -20,11 +20,34 @@ class ProductDatabaseSeeder extends Seeder
     {
         Model::unguard();
 
-        $category = Category::firstOrCreate([
-            'category_code' => 'CA_01',
-        ], [
-            'category_name' => 'Random'
-        ]);
+        $categories = [
+            'Rooms & Accommodations',
+            'Food & Beverage',
+            'Spa & Wellness',
+            'Sports & Recreation',
+            'Business & Events',
+            'Concierge & Guest Services',
+            'Transportation',
+            'Retail & Boutique',
+            'Entertainment & Leisure',
+            'Health & Medical Services',
+            'Childcare & Family Services',
+            'Technology & Connectivity',
+            'Laundry & Housekeeping',
+            'Security & Privacy Services',
+            'Membership & Loyalty Programs',
+        ];
+
+        $categoryIds = [];
+        foreach ($categories as $index => $categoryName) {
+            $category = Category::updateOrCreate([
+                'category_code' => 'CA_' . str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT),
+            ], [
+                'category_name' => $categoryName,
+            ]);
+
+            $categoryIds[] = $category->id;
+        }
 
         Unit::firstOrCreate([
             'short_name' => 'PC',
@@ -40,7 +63,7 @@ class ProductDatabaseSeeder extends Seeder
             Product::updateOrCreate([
                 'product_code' => $productCode,
             ], [
-                'category_id' => $category->id,
+                'category_id' => fake()->randomElement($categoryIds),
                 'product_name' => 'Sample Product ' . $i,
                 'product_barcode_symbology' => 'C128',
                 'product_quantity' => fake()->numberBetween(20, 500),
