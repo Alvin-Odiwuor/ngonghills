@@ -28,4 +28,9 @@ class LoyaltyAccount extends Model
     {
         return $this->hasMany(PointTransaction::class, 'loyalty_account_id', 'id');
     }
+
+    public function redemptions()
+    {
+        return $this->hasMany(Redemption::class, 'loyalty_account_id', 'id');
+    }
 }

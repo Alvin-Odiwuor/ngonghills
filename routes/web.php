@@ -30,5 +30,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('loyalty-accounts', 'LoyaltyAccountController');
     Route::resource('point-transactions', 'PointTransactionController');
     Route::resource('rewards', 'RewardController');
+    Route::resource('redemptions', 'RedemptionController');
 });
 

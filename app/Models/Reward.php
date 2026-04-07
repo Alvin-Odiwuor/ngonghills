@@ -24,4 +24,9 @@ class Reward extends Model
         'is_active' => 'boolean',
         'expires_at' => 'date',
     ];
+
+    public function redemptions()
+    {
+        return $this->hasMany(Redemption::class, 'reward_id', 'id');
+    }
 }
