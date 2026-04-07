@@ -2,6 +2,9 @@
 
 namespace Modules\Sale\Http\Controllers;
 
+use App\Models\LoyaltyAccount;
+use App\Models\PointTransaction;
+use App\Models\Reward;
 use Modules\Sale\DataTables\SalesDataTable;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Routing\Controller;
@@ -64,6 +67,19 @@ class SaleController extends Controller
                 'discount_amount' => Cart::instance('sale')->discount() * 100,
             ]);
 
+            $loyaltyAccount = LoyaltyAccount::firstOrCreate(
+                ['customer_id' => $request->customer_id],
+                [
+                    'points_balance' => 0,
+                    'total_points_earned' => 0,
+                    'total_points_redeemed' => 0,
+                    'tier' => 'Bronze',
+                    'status' => 'active',
+                ]
+            );
+
+            $earnedPointsFromSale = 0;
+
             foreach (Cart::instance('sale')->content() as $cart_item) {
                 SaleDetails::create([
                     'sale_id' => $sale->id,
@@ -79,12 +95,48 @@ class SaleController extends Controller
                     'product_tax_amount' => $cart_item->options->product_tax * 100,
                 ]);
 
+                $reward = Reward::query()
+                    ->where('product_id', $cart_item->id)
+                    ->where('is_active', true)
+                    ->where(function ($query) {
+                        $query->whereNull('expires_at')->orWhereDate('expires_at', '>=', now()->toDateString());
+                    })
+                    ->latest('id')
+                    ->first();
+                    
+
+                if ($reward) {
+                    $pointsPerUnit = is_numeric($reward->reward_value)
+                        ? (int) $reward->reward_value
+                        : (int) $reward->points_required;
+
+                    $linePoints = max(0, $pointsPerUnit) * (int) $cart_item->qty;
+                    
+
+                    if ($linePoints > 0) {
+                        PointTransaction::create([
+                            'loyalty_account_id' => $loyaltyAccount->id,
+                            'sale_id' => $sale->id,
+                            'type' => 'earn',
+                            'points' => $linePoints,
+                            'description' => 'Points earned from sale item: ' . $cart_item->name,
+                        ]);
+
+                        $earnedPointsFromSale += $linePoints;
+                    }
+                }
+
                 if ($request->status == 'Shipped' || $request->status == 'Completed') {
                     $product = Product::findOrFail($cart_item->id);
                     $product->update([
                         'product_quantity' => $product->product_quantity - $cart_item->qty
                     ]);
                 }
+            }
+
+            if ($earnedPointsFromSale > 0) {
+                $loyaltyAccount->increment('points_balance', $earnedPointsFromSale);
+                $loyaltyAccount->increment('total_points_earned', $earnedPointsFromSale);
             }
 
             Cart::instance('sale')->destroy();
