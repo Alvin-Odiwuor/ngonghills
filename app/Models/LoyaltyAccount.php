@@ -23,4 +23,9 @@ class LoyaltyAccount extends Model
     {
         return $this->belongsTo(Customer::class, 'customer_id', 'id');
     }
+
+    public function pointTransactions()
+    {
+        return $this->hasMany(PointTransaction::class, 'loyalty_account_id', 'id');
+    }
 }

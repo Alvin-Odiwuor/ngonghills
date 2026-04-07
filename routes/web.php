@@ -28,5 +28,6 @@ Route::group(['middleware' => 'auth'], function () {
         ->name('payment-flow.chart');
 
     Route::resource('loyalty-accounts', 'LoyaltyAccountController');
+    Route::resource('point-transactions', 'PointTransactionController');
 });
 
