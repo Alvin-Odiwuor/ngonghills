@@ -11,7 +11,7 @@
         <div class="form-group">
             <label for="reward_type">Reward Type <span class="text-danger">*</span></label>
             <select class="form-control" name="reward_type" id="reward_type" required>
-                @foreach(['discount', 'free_product', 'voucher'] as $type)
+                @foreach(['discount', 'free_product', 'voucher','points','early access'] as $type)
                     <option value="{{ $type }}" {{ old('reward_type', optional($reward ?? null)->reward_type ?? 'discount') === $type ? 'selected' : '' }}>
                         {{ ucfirst(str_replace('_', ' ', $type)) }}
                     </option>

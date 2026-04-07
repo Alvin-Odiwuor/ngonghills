@@ -16,10 +16,12 @@ class RewardFactory extends Factory
      */
     public function definition(): array
     {
-        $type = fake()->randomElement(['discount', 'free_product', 'voucher']);
+        $type = fake()->randomElement(['discount', 'free_product', 'voucher', 'points', 'early access']);
         $rewardValue = match ($type) {
             'discount' => (string) fake()->numberBetween(5, 50),
             'free_product' => 'PRD_' . str_pad((string) fake()->numberBetween(1, 100), 4, '0', STR_PAD_LEFT),
+            'points' => (string) fake()->numberBetween(50, 1000),
+            'early access' => strtoupper(fake()->randomElement(['VIP', 'PRIORITY', 'PREVIEW'])) . '-' . now()->addDays(fake()->numberBetween(7, 90))->format('Ymd'),
             default => 'VCH-' . strtoupper(fake()->bothify('??###??')),
         };
 
