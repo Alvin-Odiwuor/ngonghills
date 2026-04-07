@@ -209,7 +209,7 @@
     </li>
 @endcan
 
-<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('loyalty-accounts.*') || request()->routeIs('point-transactions.*') ? 'c-show' : '' }}">
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('loyalty-accounts.*') || request()->routeIs('point-transactions.*') || request()->routeIs('rewards.*') ? 'c-show' : '' }}">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-award" style="line-height: 1;"></i> Loyalty Programme
     </a>
@@ -222,6 +222,11 @@
         <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('point-transactions.*') ? 'c-active' : '' }}" href="{{ route('point-transactions.index') }}">
                 <i class="c-sidebar-nav-icon bi bi-arrow-left-right" style="line-height: 1;"></i> Point Transactions
+            </a>
+        </li>
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('rewards.*') ? 'c-active' : '' }}" href="{{ route('rewards.index') }}">
+                <i class="c-sidebar-nav-icon bi bi-gift" style="line-height: 1;"></i> Rewards
             </a>
         </li>
     </ul>
