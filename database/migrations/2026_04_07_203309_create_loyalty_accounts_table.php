@@ -1,0 +1,38 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('loyalty_accounts', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('customer_id')->unique();
+            $table->unsignedBigInteger('points_balance')->default(0);
+            $table->unsignedBigInteger('total_points_earned')->default(0);
+            $table->unsignedBigInteger('total_points_redeemed')->default(0);
+            $table->string('tier')->default('Bronze');
+            $table->string('status')->default('active');
+            $table->timestamps();
+
+            $table->foreign('customer_id')
+                ->references('id')
+                ->on('customers')
+                ->cascadeOnDelete();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('loyalty_accounts');
+    }
+};
