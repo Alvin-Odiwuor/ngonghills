@@ -5,7 +5,7 @@
 </li>
 
 @can('access_products')
-<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('products.*') || request()->routeIs('product-categories.*') || request()->routeIs('ingredients.*') || request()->routeIs('recipes.*') || request()->routeIs('recipe-ingredients.*') || request()->routeIs('production-runs.*') || request()->routeIs('production-run-ingredients.*') ? 'c-show' : '' }}">
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('products.*') || request()->routeIs('product-categories.*') || request()->routeIs('ingredients.*') || request()->routeIs('recipes.*') || request()->routeIs('recipe-ingredients.*') || request()->routeIs('production-runs.*') || request()->routeIs('production-run-ingredients.*') || request()->routeIs('ingredient-stock-adjustments.*') ? 'c-show' : '' }}">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-journal-bookmark" style="line-height: 1;"></i> Products
     </a>
@@ -52,6 +52,11 @@
         <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('production-run-ingredients.*') ? 'c-active' : '' }}" href="{{ route('production-run-ingredients.index') }}">
                 <i class="c-sidebar-nav-icon bi bi-bezier2" style="line-height: 1;"></i> Production Ingredients
+            </a>
+        </li>
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('ingredient-stock-adjustments.*') ? 'c-active' : '' }}" href="{{ route('ingredient-stock-adjustments.index') }}">
+                <i class="c-sidebar-nav-icon bi bi-sliders" style="line-height: 1;"></i> Ingredient Adjustments
             </a>
         </li>
         @can('print_barcodes')
