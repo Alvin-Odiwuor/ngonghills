@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Ingredient;
 use App\Models\IngredientPurchase;
+use App\Models\Outlet;
 use App\Models\ProductionRun;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -39,6 +40,7 @@ class IngredientStockAdjustmentFactory extends Factory
 
         return [
             'ingredient_id' => Ingredient::query()->inRandomOrder()->value('id'),
+            'outlet_id' => Outlet::query()->inRandomOrder()->value('id'),
             'adjustment_type' => fake()->randomElement(['addition', 'deduction']),
             'quantity' => fake()->randomFloat(3, 0.1, 50),
             'reason' => fake()->randomElement(['purchase', 'wastage', 'spoilage', 'correction', 'return']),

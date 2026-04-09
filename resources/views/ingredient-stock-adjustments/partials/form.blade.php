@@ -32,6 +32,22 @@
 </div>
 
 <div class="form-row">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="outlet_id">Outlet <span class="text-danger">*</span></label>
+            <select class="form-control" name="outlet_id" id="outlet_id" required>
+                <option value="">Select outlet</option>
+                @foreach(($outlets ?? collect()) as $outlet)
+                    <option value="{{ $outlet->id }}" {{ (string) old('outlet_id', optional($ingredientStockAdjustment ?? null)->outlet_id) === (string) $outlet->id ? 'selected' : '' }}>
+                        {{ $outlet->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="form-row">
     <div class="col-md-3">
         <div class="form-group">
             <label for="reason">Reason <span class="text-danger">*</span></label>

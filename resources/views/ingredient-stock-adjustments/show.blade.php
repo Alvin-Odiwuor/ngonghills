@@ -23,6 +23,10 @@
                         <strong>Ingredient:</strong>
                         <div>{{ optional($ingredientStockAdjustment->ingredient)->name ?? '-' }}</div>
                     </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Outlet:</strong>
+                        <div>{{ optional($ingredientStockAdjustment->outlet)->name ?? '-' }}</div>
+                    </div>
                     <div class="col-md-3 mb-3">
                         <strong>Type:</strong>
                         <div>{{ ucfirst($ingredientStockAdjustment->adjustment_type) }}</div>

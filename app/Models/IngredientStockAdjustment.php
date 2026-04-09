@@ -11,6 +11,7 @@ class IngredientStockAdjustment extends Model
 
     protected $fillable = [
         'ingredient_id',
+        'outlet_id',
         'adjustment_type',
         'quantity',
         'reason',
@@ -27,6 +28,11 @@ class IngredientStockAdjustment extends Model
     public function ingredient()
     {
         return $this->belongsTo(Ingredient::class, 'ingredient_id', 'id');
+    }
+
+    public function outlet()
+    {
+        return $this->belongsTo(Outlet::class, 'outlet_id', 'id');
     }
 
     public function user()

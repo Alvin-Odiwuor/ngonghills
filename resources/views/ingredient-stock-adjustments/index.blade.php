@@ -25,6 +25,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Ingredient</th>
+                                <th>Outlet</th>
                                 <th>Type</th>
                                 <th>Quantity</th>
                                 <th>Reason</th>
@@ -38,6 +39,7 @@
                                 <tr>
                                     <td>{{ $adjustment->id }}</td>
                                     <td>{{ optional($adjustment->ingredient)->name ?? '-' }}</td>
+                                    <td>{{ optional($adjustment->outlet)->name ?? '-' }}</td>
                                     <td>
                                         <span class="badge {{ $adjustment->adjustment_type === 'addition' ? 'badge-success' : 'badge-danger' }}">
                                             {{ ucfirst($adjustment->adjustment_type) }}
@@ -65,7 +67,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="text-center">No adjustments found.</td>
+                                    <td colspan="9" class="text-center">No adjustments found.</td>
                                 </tr>
                             @endforelse
                         </tbody>

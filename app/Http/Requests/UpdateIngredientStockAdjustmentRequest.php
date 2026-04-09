@@ -25,6 +25,7 @@ class UpdateIngredientStockAdjustmentRequest extends FormRequest
     {
         return [
             'ingredient_id' => 'required|integer|exists:ingredients,id',
+            'outlet_id' => 'required|integer|exists:outlets,id',
             'adjustment_type' => 'required|string|in:addition,deduction',
             'quantity' => 'required|numeric|min:0.001',
             'reason' => 'required|string|in:wastage,spoilage,correction,return',

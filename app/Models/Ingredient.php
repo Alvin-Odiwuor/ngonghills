@@ -24,4 +24,9 @@ class Ingredient extends Model
         'reorder_level' => 'decimal:3',
         'cost_per_unit' => 'decimal:4',
     ];
+
+    public function outletIngredientStocks()
+    {
+        return $this->hasMany(OutletIngredientStock::class, 'ingredient_id', 'id');
+    }
 }

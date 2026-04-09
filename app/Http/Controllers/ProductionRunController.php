@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProductionRunRequest;
 use App\Http\Requests\UpdateProductionRunRequest;
 use App\Models\Ingredient;
+use App\Models\OutletIngredientStock;
 use App\Models\IngredientStockAdjustment;
 use App\Models\Outlet;
 use App\Models\ProductionRun;
@@ -144,10 +145,21 @@ class ProductionRunController extends Controller
                 ->whereKey($recipeIngredient->ingredient_id)
                 ->lockForUpdate()
                 ->first();
+            $outletStock = OutletIngredientStock::query()
+                ->where('outlet_id', $productionRun->outlet_id)
+                ->where('ingredient_id', $recipeIngredient->ingredient_id)
+                ->lockForUpdate()
+                ->first();
 
             if (! $ingredient instanceof Ingredient) {
                 throw ValidationException::withMessages([
                     'recipe_id' => 'One or more recipe ingredients are invalid.',
+                ]);
+            }
+
+            if (! $outletStock instanceof OutletIngredientStock) {
+                throw ValidationException::withMessages([
+                    'status' => "No outlet stock record found for ingredient {$ingredient->name}.",
                 ]);
             }
 
@@ -158,14 +170,16 @@ class ProductionRunController extends Controller
             }
 
             $newStock = round((float) $ingredient->current_stock - $quantityUsed, 3);
+            $newOutletStock = round((float) $outletStock->current_stock - $quantityUsed, 3);
 
-            if ($newStock < 0) {
+            if ($newStock < 0 || $newOutletStock < 0) {
                 throw ValidationException::withMessages([
                     'status' => "Insufficient stock for ingredient {$ingredient->name}.",
                 ]);
             }
 
             $ingredient->update(['current_stock' => $newStock]);
+            $outletStock->update(['current_stock' => $newOutletStock]);
 
             $unitCost = (float) $ingredient->cost_per_unit;
             $totalCost = round($unitCost * $quantityUsed, 4);
@@ -180,6 +194,7 @@ class ProductionRunController extends Controller
 
             IngredientStockAdjustment::query()->create([
                 'ingredient_id' => $ingredient->id,
+                'outlet_id' => $productionRun->outlet_id,
                 'adjustment_type' => 'deduction',
                 'quantity' => $quantityUsed,
                 'reason' => 'correction',

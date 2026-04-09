@@ -56,7 +56,7 @@
         </li>
         <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('ingredient-stock-adjustments.*') ? 'c-active' : '' }}" href="{{ route('ingredient-stock-adjustments.index') }}">
-                <i class="c-sidebar-nav-icon bi bi-sliders" style="line-height: 1;"></i> Ingredient Adjustments
+                <i class="c-sidebar-nav-icon bi bi-sliders" style="line-height: 1;"></i> Outlet Ingredient Adjustments
             </a>
         </li>
         <li class="c-sidebar-nav-item">

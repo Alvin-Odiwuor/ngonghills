@@ -6,6 +6,8 @@ use App\Http\Requests\StoreIngredientStockAdjustmentRequest;
 use App\Http\Requests\UpdateIngredientStockAdjustmentRequest;
 use App\Models\Ingredient;
 use App\Models\IngredientPurchase;
+use App\Models\Outlet;
+use App\Models\OutletIngredientStock;
 use App\Models\IngredientStockAdjustment;
 use App\Models\ProductionRun;
 use App\Models\User;
@@ -20,7 +22,7 @@ class IngredientStockAdjustmentController extends Controller
     public function index()
     {
         $ingredientStockAdjustments = IngredientStockAdjustment::query()
-            ->with(['ingredient', 'user', 'reference'])
+            ->with(['ingredient', 'outlet', 'user', 'reference'])
             ->latest()
             ->paginate(15);
 
@@ -33,13 +35,14 @@ class IngredientStockAdjustmentController extends Controller
     public function create()
     {
         $ingredients = Ingredient::query()->orderBy('name')->get(['id', 'name', 'unit', 'current_stock']);
+        $outlets = Outlet::query()->where('status', 'active')->orderBy('name')->get(['id', 'name']);
         $users = User::query()->orderBy('name')->get(['id', 'name']);
         $referenceTypes = [
             IngredientPurchase::class => 'Ingredient Purchase',
             ProductionRun::class => 'Production Run',
         ];
 
-        return view('ingredient-stock-adjustments.create', compact('ingredients', 'users', 'referenceTypes'));
+        return view('ingredient-stock-adjustments.create', compact('ingredients', 'outlets', 'users', 'referenceTypes'));
     }
 
     /**
@@ -53,9 +56,10 @@ class IngredientStockAdjustmentController extends Controller
             $data['reference_id'] = $data['reference_id'] ?? null;
 
             $ingredient = Ingredient::query()->whereKey($data['ingredient_id'])->lockForUpdate()->firstOrFail();
+            $outletStock = $this->resolveOutletStock((int) $data['outlet_id'], (int) $data['ingredient_id']);
             $signedQuantity = $this->signedQuantity($data['adjustment_type'], (float) $data['quantity']);
 
-            $this->applyStockChange($ingredient, $signedQuantity);
+            $this->applyStockChange($ingredient, $outletStock, $signedQuantity);
 
             IngredientStockAdjustment::create($data);
         });
@@ -70,7 +74,7 @@ class IngredientStockAdjustmentController extends Controller
      */
     public function show(IngredientStockAdjustment $ingredientStockAdjustment)
     {
-        $ingredientStockAdjustment->load(['ingredient', 'user', 'reference']);
+        $ingredientStockAdjustment->load(['ingredient', 'outlet', 'user', 'reference']);
 
         return view('ingredient-stock-adjustments.show', compact('ingredientStockAdjustment'));
     }
@@ -81,13 +85,14 @@ class IngredientStockAdjustmentController extends Controller
     public function edit(IngredientStockAdjustment $ingredientStockAdjustment)
     {
         $ingredients = Ingredient::query()->orderBy('name')->get(['id', 'name', 'unit', 'current_stock']);
+        $outlets = Outlet::query()->where('status', 'active')->orderBy('name')->get(['id', 'name']);
         $users = User::query()->orderBy('name')->get(['id', 'name']);
         $referenceTypes = [
             IngredientPurchase::class => 'Ingredient Purchase',
             ProductionRun::class => 'Production Run',
         ];
 
-        return view('ingredient-stock-adjustments.edit', compact('ingredientStockAdjustment', 'ingredients', 'users', 'referenceTypes'));
+        return view('ingredient-stock-adjustments.edit', compact('ingredientStockAdjustment', 'ingredients', 'outlets', 'users', 'referenceTypes'));
     }
 
     /**
@@ -101,15 +106,21 @@ class IngredientStockAdjustmentController extends Controller
             $data['reference_id'] = $data['reference_id'] ?? null;
 
             $oldIngredient = Ingredient::query()->whereKey($ingredientStockAdjustment->ingredient_id)->lockForUpdate()->firstOrFail();
+            $oldOutletStock = $this->resolveOutletStock((int) $ingredientStockAdjustment->outlet_id, (int) $ingredientStockAdjustment->ingredient_id);
             $reverseQuantity = -1 * $this->signedQuantity($ingredientStockAdjustment->adjustment_type, (float) $ingredientStockAdjustment->quantity);
-            $this->applyStockChange($oldIngredient, $reverseQuantity);
+            $this->applyStockChange($oldIngredient, $oldOutletStock, $reverseQuantity);
 
             $newIngredient = (int) $data['ingredient_id'] === (int) $ingredientStockAdjustment->ingredient_id
                 ? $oldIngredient
                 : Ingredient::query()->whereKey($data['ingredient_id'])->lockForUpdate()->firstOrFail();
 
+            $newOutletStock = (int) $data['ingredient_id'] === (int) $ingredientStockAdjustment->ingredient_id
+                && (int) $data['outlet_id'] === (int) $ingredientStockAdjustment->outlet_id
+                ? $oldOutletStock
+                : $this->resolveOutletStock((int) $data['outlet_id'], (int) $data['ingredient_id']);
+
             $newSignedQuantity = $this->signedQuantity($data['adjustment_type'], (float) $data['quantity']);
-            $this->applyStockChange($newIngredient, $newSignedQuantity);
+            $this->applyStockChange($newIngredient, $newOutletStock, $newSignedQuantity);
 
             $ingredientStockAdjustment->update($data);
         });
@@ -126,8 +137,9 @@ class IngredientStockAdjustmentController extends Controller
     {
         DB::transaction(function () use ($ingredientStockAdjustment) {
             $ingredient = Ingredient::query()->whereKey($ingredientStockAdjustment->ingredient_id)->lockForUpdate()->firstOrFail();
+            $outletStock = $this->resolveOutletStock((int) $ingredientStockAdjustment->outlet_id, (int) $ingredientStockAdjustment->ingredient_id);
             $reverseQuantity = -1 * $this->signedQuantity($ingredientStockAdjustment->adjustment_type, (float) $ingredientStockAdjustment->quantity);
-            $this->applyStockChange($ingredient, $reverseQuantity);
+            $this->applyStockChange($ingredient, $outletStock, $reverseQuantity);
 
             $ingredientStockAdjustment->delete();
         });
@@ -142,11 +154,12 @@ class IngredientStockAdjustmentController extends Controller
         return $adjustmentType === 'deduction' ? -1 * $quantity : $quantity;
     }
 
-    private function applyStockChange(Ingredient $ingredient, float $signedQuantity): void
+    private function applyStockChange(Ingredient $ingredient, OutletIngredientStock $outletStock, float $signedQuantity): void
     {
         $newStock = (float) $ingredient->current_stock + $signedQuantity;
+        $newOutletStock = (float) $outletStock->current_stock + $signedQuantity;
 
-        if ($newStock < 0) {
+        if ($newStock < 0 || $newOutletStock < 0) {
             throw ValidationException::withMessages([
                 'quantity' => 'This adjustment would reduce stock below zero for the selected ingredient.',
             ]);
@@ -155,5 +168,34 @@ class IngredientStockAdjustmentController extends Controller
         $ingredient->update([
             'current_stock' => $newStock,
         ]);
+
+        $outletStock->update([
+            'current_stock' => $newOutletStock,
+        ]);
+    }
+
+    private function resolveOutletStock(int $outletId, int $ingredientId): OutletIngredientStock
+    {
+        $outletStock = OutletIngredientStock::query()
+            ->where('outlet_id', $outletId)
+            ->where('ingredient_id', $ingredientId)
+            ->lockForUpdate()
+            ->first();
+
+        if ($outletStock) {
+            return $outletStock;
+        }
+
+        OutletIngredientStock::query()->create([
+            'outlet_id' => $outletId,
+            'ingredient_id' => $ingredientId,
+            'current_stock' => 0,
+        ]);
+
+        return OutletIngredientStock::query()
+            ->where('outlet_id', $outletId)
+            ->where('ingredient_id', $ingredientId)
+            ->lockForUpdate()
+            ->firstOrFail();
     }
 }
