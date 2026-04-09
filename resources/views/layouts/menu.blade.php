@@ -5,7 +5,7 @@
 </li>
 
 @can('access_products')
-<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('products.*') || request()->routeIs('product-categories.*') || request()->routeIs('ingredients.*') || request()->routeIs('recipes.*') || request()->routeIs('recipe-ingredients.*') ? 'c-show' : '' }}">
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('products.*') || request()->routeIs('product-categories.*') || request()->routeIs('ingredients.*') || request()->routeIs('recipes.*') || request()->routeIs('recipe-ingredients.*') || request()->routeIs('production-runs.*') ? 'c-show' : '' }}">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-journal-bookmark" style="line-height: 1;"></i> Products
     </a>
@@ -42,6 +42,11 @@
         <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('recipe-ingredients.*') ? 'c-active' : '' }}" href="{{ route('recipe-ingredients.index') }}">
                 <i class="c-sidebar-nav-icon bi bi-list-check" style="line-height: 1;"></i> Recipe Ingredients
+            </a>
+        </li>
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('production-runs.*') ? 'c-active' : '' }}" href="{{ route('production-runs.index') }}">
+                <i class="c-sidebar-nav-icon bi bi-gear-wide-connected" style="line-height: 1;"></i> Production Runs
             </a>
         </li>
         @can('print_barcodes')
