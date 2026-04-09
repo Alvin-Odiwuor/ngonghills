@@ -13,6 +13,7 @@ class ProductionRun extends Model
     protected $fillable = [
         'recipe_id',
         'product_id',
+        'outlet_id',
         'quantity_produced',
         'production_date',
         'batch_number',
@@ -34,6 +35,11 @@ class ProductionRun extends Model
     public function product()
     {
         return $this->belongsTo(Product::class, 'product_id', 'id');
+    }
+
+    public function outlet()
+    {
+        return $this->belongsTo(Outlet::class, 'outlet_id', 'id');
     }
 
     public function user()

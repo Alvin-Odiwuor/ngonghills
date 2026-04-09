@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Outlet;
 use App\Models\ProductionRun;
 use App\Models\Recipe;
 use App\Models\User;
@@ -15,8 +16,8 @@ class ProductionRunSeeder extends Seeder
      */
     public function run(): void
     {
-        if (Recipe::query()->doesntExist() || Product::query()->doesntExist() || User::query()->doesntExist()) {
-            $this->command?->warn('Skipping ProductionRunSeeder: recipes, products, or users are missing.');
+        if (Recipe::query()->doesntExist() || Product::query()->doesntExist() || User::query()->doesntExist() || Outlet::query()->doesntExist()) {
+            $this->command?->warn('Skipping ProductionRunSeeder: recipes, products, users, or outlets are missing.');
             return;
         }
 

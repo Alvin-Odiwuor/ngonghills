@@ -27,6 +27,7 @@
                                 <th>Batch</th>
                                 <th>Recipe</th>
                                 <th>Product</th>
+                                <th>Outlet</th>
                                 <th>Qty Produced</th>
                                 <th>Date</th>
                                 <th>Produced By</th>
@@ -41,6 +42,7 @@
                                     <td>{{ $run->batch_number }}</td>
                                     <td>{{ optional($run->recipe)->name ?? '-' }}</td>
                                     <td>{{ optional($run->product)->product_name ?? '-' }}</td>
+                                    <td>{{ optional($run->outlet)->name ?? '-' }}</td>
                                     <td>{{ number_format((float) $run->quantity_produced, 3) }}</td>
                                     <td>{{ optional($run->production_date)->format('d M, Y') ?? '-' }}</td>
                                     <td>{{ optional($run->user)->name ?? '-' }}</td>
@@ -67,7 +69,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="9" class="text-center">No production runs found.</td>
+                                    <td colspan="10" class="text-center">No production runs found.</td>
                                 </tr>
                             @endforelse
                         </tbody>

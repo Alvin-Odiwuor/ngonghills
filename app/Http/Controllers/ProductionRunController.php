@@ -6,6 +6,7 @@ use App\Http\Requests\StoreProductionRunRequest;
 use App\Http\Requests\UpdateProductionRunRequest;
 use App\Models\Ingredient;
 use App\Models\IngredientStockAdjustment;
+use App\Models\Outlet;
 use App\Models\ProductionRun;
 use App\Models\ProductionRunIngredient;
 use App\Models\Recipe;
@@ -23,7 +24,7 @@ class ProductionRunController extends Controller
     public function index()
     {
         $productionRuns = ProductionRun::query()
-            ->with(['recipe', 'product', 'user'])
+            ->with(['recipe', 'product', 'outlet', 'user'])
             ->orderByDesc('production_date')
             ->orderByDesc('id')
             ->paginate(15);
@@ -38,9 +39,10 @@ class ProductionRunController extends Controller
     {
         $recipes = Recipe::query()->orderBy('name')->get(['id', 'name']);
         $products = Product::query()->orderBy('product_name')->get(['id', 'product_name']);
+        $outlets = Outlet::query()->where('status', 'active')->orderBy('name')->get(['id', 'name']);
         $users = User::query()->orderBy('name')->get(['id', 'name']);
 
-        return view('production-runs.create', compact('recipes', 'products', 'users'));
+        return view('production-runs.create', compact('recipes', 'products', 'outlets', 'users'));
     }
 
     /**
@@ -66,7 +68,7 @@ class ProductionRunController extends Controller
      */
     public function show(ProductionRun $productionRun)
     {
-        $productionRun->load(['recipe', 'product', 'user']);
+        $productionRun->load(['recipe', 'product', 'outlet', 'user']);
 
         return view('production-runs.show', compact('productionRun'));
     }
@@ -78,9 +80,10 @@ class ProductionRunController extends Controller
     {
         $recipes = Recipe::query()->orderBy('name')->get(['id', 'name']);
         $products = Product::query()->orderBy('product_name')->get(['id', 'product_name']);
+        $outlets = Outlet::query()->where('status', 'active')->orderBy('name')->get(['id', 'name']);
         $users = User::query()->orderBy('name')->get(['id', 'name']);
 
-        return view('production-runs.edit', compact('productionRun', 'recipes', 'products', 'users'));
+        return view('production-runs.edit', compact('productionRun', 'recipes', 'products', 'outlets', 'users'));
     }
 
     /**

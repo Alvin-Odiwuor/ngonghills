@@ -27,6 +27,7 @@ class UpdateProductionRunRequest extends FormRequest
         return [
             'recipe_id' => 'required|integer|exists:recipes,id',
             'product_id' => 'required|integer|exists:products,id',
+            'outlet_id' => 'required|integer|exists:outlets,id',
             'quantity_produced' => 'required|numeric|min:0.001',
             'production_date' => 'required|date',
             'batch_number' => [

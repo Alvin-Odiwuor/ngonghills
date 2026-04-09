@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use App\Models\ProductionRun;
 use Modules\Product\Entities\Product;
 use Modules\Sale\Entities\Sale;
 
@@ -48,5 +49,10 @@ class Outlet extends Model
     public function sales()
     {
         return $this->hasMany(Sale::class, 'outlet_id', 'id');
+    }
+
+    public function productionRuns()
+    {
+        return $this->hasMany(ProductionRun::class, 'outlet_id', 'id');
     }
 }

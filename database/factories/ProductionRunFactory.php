@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Outlet;
 use App\Models\Recipe;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -24,6 +25,7 @@ class ProductionRunFactory extends Factory
         return [
             'recipe_id' => Recipe::query()->inRandomOrder()->value('id'),
             'product_id' => Product::query()->inRandomOrder()->value('id'),
+            'outlet_id' => Outlet::query()->inRandomOrder()->value('id'),
             'quantity_produced' => fake()->randomFloat(3, 1, 500),
             'production_date' => fake()->dateTimeBetween('-3 months', '+1 month')->format('Y-m-d'),
             'batch_number' => 'BATCH-' . strtoupper(fake()->bothify('###??###')),

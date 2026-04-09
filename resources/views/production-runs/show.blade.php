@@ -40,6 +40,10 @@
                         <div>{{ optional($productionRun->product)->product_name ?? '-' }}</div>
                     </div>
                     <div class="col-md-6 mb-3">
+                        <strong>Outlet:</strong>
+                        <div>{{ optional($productionRun->outlet)->name ?? '-' }}</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
                         <strong>Produced By:</strong>
                         <div>{{ optional($productionRun->user)->name ?? '-' }}</div>
                     </div>
