@@ -36,11 +36,10 @@
         <div class="form-group">
             <label for="reason">Reason <span class="text-danger">*</span></label>
             <select class="form-control" name="reason" id="reason" required>
-                @foreach(['purchase', 'wastage', 'spoilage', 'correction', 'return'] as $reason)
-                    <option value="{{ $reason }}" {{ old('reason', optional($ingredientStockAdjustment ?? null)->reason ?? 'correction') === $reason ? 'selected' : '' }}>
-                        {{ ucfirst($reason) }}
-                    </option>
-                @endforeach
+                <option value="wastage" {{ old('reason', optional($ingredientStockAdjustment ?? null)->reason ?? 'correction') === 'wastage' ? 'selected' : '' }}>Wastage</option>
+                <option value="spoilage" {{ old('reason', optional($ingredientStockAdjustment ?? null)->reason ?? 'correction') === 'spoilage' ? 'selected' : '' }}>Spoilage / Expiry</option>
+                <option value="correction" {{ old('reason', optional($ingredientStockAdjustment ?? null)->reason ?? 'correction') === 'correction' ? 'selected' : '' }}>Stock Correction</option>
+                <option value="return" {{ old('reason', optional($ingredientStockAdjustment ?? null)->reason ?? 'correction') === 'return' ? 'selected' : '' }}>Return (Supplier or Kitchen)</option>
             </select>
         </div>
     </div>
@@ -79,8 +78,9 @@
 </div>
 
 <div class="form-group">
-    <label for="notes">Notes</label>
-    <textarea class="form-control" name="notes" id="notes" rows="4">{{ old('notes', optional($ingredientStockAdjustment ?? null)->notes) }}</textarea>
+    <label for="notes">Notes <span class="text-danger">*</span></label>
+    <textarea class="form-control" name="notes" id="notes" rows="4" required>{{ old('notes', optional($ingredientStockAdjustment ?? null)->notes) }}</textarea>
+    <small class="form-text text-muted">Mandatory for audit: include what happened and where.</small>
 </div>
 
 <div class="d-flex flex-wrap justify-content-between mt-3">

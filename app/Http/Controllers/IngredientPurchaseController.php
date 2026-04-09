@@ -6,6 +6,10 @@ use App\Http\Requests\StoreIngredientPurchaseRequest;
 use App\Http\Requests\UpdateIngredientPurchaseRequest;
 use App\Models\Ingredient;
 use App\Models\IngredientPurchase;
+use App\Models\IngredientStockAdjustment;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Modules\People\Entities\Supplier;
 
 class IngredientPurchaseController extends Controller
@@ -40,10 +44,15 @@ class IngredientPurchaseController extends Controller
      */
     public function store(StoreIngredientPurchaseRequest $request)
     {
-        $data = $request->validated();
-        $data['total_cost'] = (float) $data['quantity'] * (float) $data['unit_cost'];
+        DB::transaction(function () use ($request): void {
+            $data = $request->validated();
+            $data['total_cost'] = (float) $data['quantity'] * (float) $data['unit_cost'];
 
-        IngredientPurchase::create($data);
+            $ingredientPurchase = IngredientPurchase::query()->create($data);
+
+            $this->applyPurchaseStockMovement($ingredientPurchase);
+            $this->upsertPurchaseAdjustment($ingredientPurchase);
+        });
 
         toast('Ingredient Purchase Created!', 'success');
 
@@ -76,10 +85,20 @@ class IngredientPurchaseController extends Controller
      */
     public function update(UpdateIngredientPurchaseRequest $request, IngredientPurchase $ingredientPurchase)
     {
-        $data = $request->validated();
-        $data['total_cost'] = (float) $data['quantity'] * (float) $data['unit_cost'];
+        DB::transaction(function () use ($request, $ingredientPurchase): void {
+            $previousIngredientId = (int) $ingredientPurchase->ingredient_id;
+            $previousQuantity = (float) $ingredientPurchase->quantity;
 
-        $ingredientPurchase->update($data);
+            $data = $request->validated();
+            $data['total_cost'] = (float) $data['quantity'] * (float) $data['unit_cost'];
+
+            $this->revertPurchaseStockMovement($previousIngredientId, $previousQuantity);
+
+            $ingredientPurchase->update($data);
+
+            $this->applyPurchaseStockMovement($ingredientPurchase);
+            $this->upsertPurchaseAdjustment($ingredientPurchase);
+        });
 
         toast('Ingredient Purchase Updated!', 'info');
 
@@ -91,10 +110,86 @@ class IngredientPurchaseController extends Controller
      */
     public function destroy(IngredientPurchase $ingredientPurchase)
     {
-        $ingredientPurchase->delete();
+        DB::transaction(function () use ($ingredientPurchase): void {
+            $this->revertPurchaseStockMovement((int) $ingredientPurchase->ingredient_id, (float) $ingredientPurchase->quantity);
+
+            IngredientStockAdjustment::query()
+                ->where('reference_type', IngredientPurchase::class)
+                ->where('reference_id', $ingredientPurchase->id)
+                ->delete();
+
+            $ingredientPurchase->delete();
+        });
 
         toast('Ingredient Purchase Deleted!', 'warning');
 
         return redirect()->route('ingredient-purchases.index');
+    }
+
+    private function applyPurchaseStockMovement(IngredientPurchase $ingredientPurchase): void
+    {
+        $ingredient = Ingredient::query()
+            ->whereKey($ingredientPurchase->ingredient_id)
+            ->lockForUpdate()
+            ->firstOrFail();
+
+        $ingredient->update([
+            'current_stock' => round((float) $ingredient->current_stock + (float) $ingredientPurchase->quantity, 3),
+        ]);
+    }
+
+    private function revertPurchaseStockMovement(int $ingredientId, float $quantity): void
+    {
+        $ingredient = Ingredient::query()
+            ->whereKey($ingredientId)
+            ->lockForUpdate()
+            ->firstOrFail();
+
+        $newStock = round((float) $ingredient->current_stock - $quantity, 3);
+
+        if ($newStock < 0) {
+            throw ValidationException::withMessages([
+                'quantity' => 'This change would reduce ingredient stock below zero.',
+            ]);
+        }
+
+        $ingredient->update([
+            'current_stock' => $newStock,
+        ]);
+    }
+
+    private function upsertPurchaseAdjustment(IngredientPurchase $ingredientPurchase): void
+    {
+        $adjustedBy = auth()->id() ?: User::query()->value('id');
+
+        if (! $adjustedBy) {
+            throw ValidationException::withMessages([
+                'ingredient_id' => 'No user found for stock adjustment attribution.',
+            ]);
+        }
+
+        $payload = [
+            'ingredient_id' => $ingredientPurchase->ingredient_id,
+            'adjustment_type' => 'addition',
+            'quantity' => $ingredientPurchase->quantity,
+            'reason' => 'purchase',
+            'reference_id' => $ingredientPurchase->id,
+            'reference_type' => IngredientPurchase::class,
+            'notes' => 'Auto-addition from ingredient purchase invoice '.$ingredientPurchase->invoice_number.'.',
+            'adjusted_by' => $adjustedBy,
+        ];
+
+        $adjustment = IngredientStockAdjustment::query()
+            ->where('reference_type', IngredientPurchase::class)
+            ->where('reference_id', $ingredientPurchase->id)
+            ->first();
+
+        if ($adjustment) {
+            $adjustment->update($payload);
+
+            return;
+        }
+
+        IngredientStockAdjustment::query()->create($payload);
     }
 }

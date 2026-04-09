@@ -27,7 +27,7 @@ class StoreIngredientStockAdjustmentRequest extends FormRequest
             'ingredient_id' => 'required|integer|exists:ingredients,id',
             'adjustment_type' => 'required|string|in:addition,deduction',
             'quantity' => 'required|numeric|min:0.001',
-            'reason' => 'required|string|in:purchase,wastage,spoilage,correction,return',
+            'reason' => 'required|string|in:wastage,spoilage,correction,return',
             'reference_type' => 'nullable|string|in:' . IngredientPurchase::class . ',' . ProductionRun::class,
             'reference_id' => [
                 'nullable',
@@ -58,7 +58,7 @@ class StoreIngredientStockAdjustmentRequest extends FormRequest
                     }
                 },
             ],
-            'notes' => 'nullable|string|max:3000',
+            'notes' => 'required|string|max:3000',
             'adjusted_by' => 'required|integer|exists:users,id',
         ];
     }
