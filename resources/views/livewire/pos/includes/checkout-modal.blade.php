@@ -28,6 +28,15 @@
                             <input type="hidden" value="{{ $global_tax }}" name="tax_percentage">
                             <input type="hidden" value="{{ $global_discount }}" name="discount_percentage">
                             <input type="hidden" value="{{ $shipping }}" name="shipping_amount">
+                            <div class="form-group">
+                                <label for="outlet_id">Outlet <span class="text-danger">*</span></label>
+                                <select class="form-control" name="outlet_id" id="outlet_id" required>
+                                    <option value="">Select outlet</option>
+                                    @foreach(($outlets ?? collect()) as $outlet)
+                                        <option value="{{ $outlet->id }}">{{ $outlet->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                             <div class="form-row">
                                 <div class="col-lg-6">
                                     <div class="form-group">

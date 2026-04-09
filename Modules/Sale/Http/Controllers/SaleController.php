@@ -3,6 +3,7 @@
 namespace Modules\Sale\Http\Controllers;
 
 use App\Models\LoyaltyAccount;
+use App\Models\Outlet;
 use App\Models\PointTransaction;
 use App\Models\Reward;
 use Modules\Sale\DataTables\SalesDataTable;
@@ -33,7 +34,9 @@ class SaleController extends Controller
 
         Cart::instance('sale')->destroy();
 
-        return view('sale::create');
+        $outlets = Outlet::query()->where('status', 'active')->orderBy('name')->get(['id', 'name']);
+
+        return view('sale::create', compact('outlets'));
     }
 
 
@@ -52,6 +55,7 @@ class SaleController extends Controller
             $sale = Sale::create([
                 'date' => $request->date,
                 'customer_id' => $request->customer_id,
+                'outlet_id' => $request->outlet_id,
                 'customer_name' => Customer::findOrFail($request->customer_id)->customer_name,
                 'tax_percentage' => $request->tax_percentage,
                 'discount_percentage' => $request->discount_percentage,
@@ -195,7 +199,9 @@ class SaleController extends Controller
             ]);
         }
 
-        return view('sale::edit', compact('sale'));
+        $outlets = Outlet::query()->where('status', 'active')->orderBy('name')->get(['id', 'name']);
+
+        return view('sale::edit', compact('sale', 'outlets'));
     }
 
 
@@ -226,6 +232,7 @@ class SaleController extends Controller
                 'date' => $request->date,
                 'reference' => $request->reference,
                 'customer_id' => $request->customer_id,
+                'outlet_id' => $request->outlet_id,
                 'customer_name' => Customer::findOrFail($request->customer_id)->customer_name,
                 'tax_percentage' => $request->tax_percentage,
                 'discount_percentage' => $request->discount_percentage,

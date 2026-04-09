@@ -15,6 +15,9 @@ class SalesDataTable extends DataTable
     public function dataTable($query) {
         return datatables()
             ->eloquent($query)
+            ->addColumn('outlet', function ($data) {
+                return optional($data->outlet)->name ?: '-';
+            })
             ->addColumn('total_amount', function ($data) {
                 return format_currency($data->total_amount);
             })
@@ -36,7 +39,7 @@ class SalesDataTable extends DataTable
     }
 
     public function query(Sale $model) {
-        return $model->newQuery();
+        return $model->newQuery()->with('outlet');
     }
 
     public function html() {
@@ -47,7 +50,7 @@ class SalesDataTable extends DataTable
             ->dom("<'row'<'col-md-3'l><'col-md-5 mb-2'B><'col-md-4'f>> .
                                 'tr' .
                                 <'row'<'col-md-5'i><'col-md-7 mt-2'p>>")
-            ->orderBy(8)
+            ->orderBy(9)
             ->buttons(
                 Button::make('excel')
                     ->text('<i class="bi bi-file-earmark-excel-fill"></i> Excel'),
@@ -67,6 +70,9 @@ class SalesDataTable extends DataTable
 
             Column::make('customer_name')
                 ->title('Customer')
+                ->className('text-center align-middle'),
+
+            Column::computed('outlet')
                 ->className('text-center align-middle'),
 
             Column::computed('status')

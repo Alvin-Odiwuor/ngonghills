@@ -48,6 +48,7 @@
                                 <h5 class="mb-2 border-bottom pb-2">Invoice Info:</h5>
                                 <div>Invoice: <strong>INV/{{ $sale->reference }}</strong></div>
                                 <div>Date: {{ \Carbon\Carbon::parse($sale->date)->format('d M, Y') }}</div>
+                                <div>Outlet: <strong>{{ optional($sale->outlet)->name ?: '-' }}</strong></div>
                                 <div>
                                     Status: <strong>{{ $sale->status }}</strong>
                                 </div>

@@ -36,6 +36,19 @@
                                 <div class="col-lg-4">
                                     <div class="from-group">
                                         <div class="form-group">
+                                            <label for="outlet_id">Outlet <span class="text-danger">*</span></label>
+                                            <select class="form-control" name="outlet_id" id="outlet_id" required>
+                                                <option value="">Select outlet</option>
+                                                @foreach(($outlets ?? collect()) as $outlet)
+                                                    <option {{ (string) old('outlet_id', $sale->outlet_id) === (string) $outlet->id ? 'selected' : '' }} value="{{ $outlet->id }}">{{ $outlet->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="from-group">
+                                        <div class="form-group">
                                             <label for="customer_id">Customer <span class="text-danger">*</span></label>
                                             <select class="form-control" name="customer_id" id="customer_id" required>
                                                 @foreach(\Modules\People\Entities\Customer::all() as $customer)
@@ -45,7 +58,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-4">
+                                <div class="col-lg-12 col-xl-4">
                                     <div class="from-group">
                                         <div class="form-group">
                                             <label for="date">Date <span class="text-danger">*</span></label>

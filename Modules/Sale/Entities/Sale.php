@@ -2,6 +2,7 @@
 
 namespace Modules\Sale\Entities;
 
+use App\Models\Outlet;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -17,6 +18,10 @@ class Sale extends Model
 
     public function salePayments() {
         return $this->hasMany(SalePayment::class, 'sale_id', 'id');
+    }
+
+    public function outlet() {
+        return $this->belongsTo(Outlet::class, 'outlet_id', 'id');
     }
 
     public static function boot() {

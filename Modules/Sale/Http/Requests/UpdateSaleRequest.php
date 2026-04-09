@@ -16,6 +16,7 @@ class UpdateSaleRequest extends FormRequest
     {
         return [
             'customer_id' => 'required|numeric',
+            'outlet_id' => 'required|integer|exists:outlets,id',
             'reference' => 'required|string|max:255',
             'tax_percentage' => 'required|integer|min:0|max:100',
             'discount_percentage' => 'required|integer|min:0|max:100',

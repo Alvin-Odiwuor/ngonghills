@@ -3,6 +3,7 @@
 namespace Modules\Sale\Http\Controllers;
 
 use App\Models\LoyaltyAccount;
+use App\Models\Outlet;
 use App\Models\PointTransaction;
 use App\Models\Reward;
 use Gloudemans\Shoppingcart\Facades\Cart;
@@ -25,9 +26,10 @@ class PosController extends Controller
         Cart::instance('sale')->destroy();
 
         $customers = Customer::all();
+        $outlets = Outlet::query()->where('status', 'active')->orderBy('name')->get(['id', 'name']);
         $product_categories = Category::all();
 
-        return view('sale::pos.index', compact('product_categories', 'customers'));
+        return view('sale::pos.index', compact('product_categories', 'customers', 'outlets'));
     }
 
 
@@ -47,6 +49,7 @@ class PosController extends Controller
                 'date' => now()->format('Y-m-d'),
                 'reference' => 'PSL',
                 'customer_id' => $request->customer_id,
+                'outlet_id' => $request->outlet_id,
                 'customer_name' => Customer::findOrFail($request->customer_id)->customer_name,
                 'tax_percentage' => $request->tax_percentage,
                 'discount_percentage' => $request->discount_percentage,

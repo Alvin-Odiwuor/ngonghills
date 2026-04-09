@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use Modules\Product\Entities\Product;
+use Modules\Sale\Entities\Sale;
 
 class Outlet extends Model
 {
@@ -42,5 +43,10 @@ class Outlet extends Model
         return $this->belongsToMany(Product::class, 'outlet_products', 'outlet_id', 'product_id')
             ->withPivot(['price', 'status'])
             ->withTimestamps();
+    }
+
+    public function sales()
+    {
+        return $this->hasMany(Sale::class, 'outlet_id', 'id');
     }
 }
