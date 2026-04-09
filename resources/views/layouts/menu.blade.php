@@ -5,7 +5,7 @@
 </li>
 
 @can('access_products')
-<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('products.*') || request()->routeIs('product-categories.*') ? 'c-show' : '' }}">
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('products.*') || request()->routeIs('product-categories.*') || request()->routeIs('ingredients.*') ? 'c-show' : '' }}">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-journal-bookmark" style="line-height: 1;"></i> Products
     </a>
@@ -27,6 +27,11 @@
         <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('products.index') ? 'c-active' : '' }}" href="{{ route('products.index') }}">
                 <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> All Products
+            </a>
+        </li>
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('ingredients.*') ? 'c-active' : '' }}" href="{{ route('ingredients.index') }}">
+                <i class="c-sidebar-nav-icon bi bi-box-seam" style="line-height: 1;"></i> Ingredients
             </a>
         </li>
         @can('print_barcodes')
