@@ -3,6 +3,7 @@
 namespace Modules\User\Http\Controllers;
 
 use Modules\User\DataTables\UsersDataTable;
+use App\Models\Outlet;
 use App\Models\User;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
@@ -24,7 +25,9 @@ class UsersController extends Controller
     public function create() {
         abort_if(Gate::denies('access_user_management'), 403);
 
-        return view('user::users.create');
+        $outlets = Outlet::query()->where('status', 'active')->orderBy('name')->get(['id', 'name']);
+
+        return view('user::users.create', compact('outlets'));
     }
 
 
@@ -34,14 +37,16 @@ class UsersController extends Controller
         $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|max:255|unique:users,email',
-            'password' => 'required|string|min:8|max:255|confirmed'
+            'password' => 'required|string|min:8|max:255|confirmed',
+            'outlet_id' => 'nullable|integer|exists:outlets,id',
         ]);
 
         $user = User::create([
             'name'     => $request->name,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
-            'is_active' => $request->is_active
+            'is_active' => $request->is_active,
+            'outlet_id' => $request->outlet_id,
         ]);
 
         $user->assignRole($request->role);
@@ -66,7 +71,9 @@ class UsersController extends Controller
     public function edit(User $user) {
         abort_if(Gate::denies('access_user_management'), 403);
 
-        return view('user::users.edit', compact('user'));
+        $outlets = Outlet::query()->where('status', 'active')->orderBy('name')->get(['id', 'name']);
+
+        return view('user::users.edit', compact('user', 'outlets'));
     }
 
 
@@ -76,12 +83,14 @@ class UsersController extends Controller
         $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|max:255|unique:users,email,'.$user->id,
+            'outlet_id' => 'nullable|integer|exists:outlets,id',
         ]);
 
         $user->update([
             'name'     => $request->name,
             'email'    => $request->email,
-            'is_active' => $request->is_active
+            'is_active' => $request->is_active,
+            'outlet_id' => $request->outlet_id,
         ]);
 
         $user->syncRoles($request->role);

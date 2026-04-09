@@ -60,4 +60,9 @@ class Outlet extends Model
     {
         return $this->hasMany(IngredientPurchase::class, 'outlet_id', 'id');
     }
+
+    public function staff()
+    {
+        return $this->hasMany(User::class, 'outlet_id', 'id');
+    }
 }

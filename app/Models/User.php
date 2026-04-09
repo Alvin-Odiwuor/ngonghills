@@ -25,7 +25,8 @@ class User extends Authenticatable implements HasMedia
         'name',
         'email',
         'password',
-        'is_active'
+        'is_active',
+        'outlet_id'
     ];
 
     /**
@@ -62,5 +63,10 @@ class User extends Authenticatable implements HasMedia
     public function managedOutlets()
     {
         return $this->hasMany(Outlet::class, 'manager_id', 'id');
+    }
+
+    public function outlet()
+    {
+        return $this->belongsTo(Outlet::class, 'outlet_id', 'id');
     }
 }

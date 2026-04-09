@@ -56,6 +56,16 @@
                             </div>
 
                             <div class="form-group">
+                                <label for="outlet_id">Outlet</label>
+                                <select class="form-control" name="outlet_id" id="outlet_id">
+                                    <option value="">No Outlet Assigned</option>
+                                    @foreach(($outlets ?? collect()) as $outlet)
+                                        <option value="{{ $outlet->id }}" {{ (string) old('outlet_id', $user->outlet_id) === (string) $outlet->id ? 'selected' : '' }}>{{ $outlet->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="form-group">
                                 <label for="is_active">Status <span class="text-danger">*</span></label>
                                 <select class="form-control" name="is_active" id="is_active" required>
                                     <option value="1" {{ $user->is_active == 1 ? 'selected' : ''}}>Active</option>

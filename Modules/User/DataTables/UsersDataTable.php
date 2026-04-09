@@ -20,6 +20,9 @@ class UsersDataTable extends DataTable
                     'roles' => $data->getRoleNames()
                 ]);
             })
+            ->addColumn('outlet', function ($data) {
+                return optional($data->outlet)->name ?: '-';
+            })
             ->addColumn('action', function ($data) {
                 return view('user::users.partials.actions', compact('data'));
             })
@@ -42,6 +45,7 @@ class UsersDataTable extends DataTable
 
     public function query(User $model) {
         return $model->newQuery()
+            ->with('outlet')
             ->with(['roles' => function ($query) {
                 $query->select('name')->get();
             }])
@@ -56,7 +60,7 @@ class UsersDataTable extends DataTable
             ->dom("<'row'<'col-md-3'l><'col-md-5 mb-2'B><'col-md-4'f>> .
                                 'tr' .
                                 <'row'<'col-md-5'i><'col-md-7 mt-2'p>>")
-            ->orderBy(6)
+            ->orderBy(7)
             ->buttons(
                 Button::make('excel')
                     ->text('<i class="bi bi-file-earmark-excel-fill"></i> Excel'),
@@ -81,6 +85,9 @@ class UsersDataTable extends DataTable
                 ->className('text-center align-middle'),
 
             Column::computed('role')
+                ->className('text-center align-middle'),
+
+            Column::computed('outlet')
                 ->className('text-center align-middle'),
 
             Column::computed('status')

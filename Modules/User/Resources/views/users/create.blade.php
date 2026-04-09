@@ -71,6 +71,16 @@
                             </div>
 
                             <div class="form-group">
+                                <label for="outlet_id">Outlet</label>
+                                <select class="form-control" name="outlet_id" id="outlet_id">
+                                    <option value="">No Outlet Assigned</option>
+                                    @foreach(($outlets ?? collect()) as $outlet)
+                                        <option value="{{ $outlet->id }}">{{ $outlet->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="form-group">
                                 <label for="is_active">Status <span class="text-danger">*</span></label>
                                 <select class="form-control" name="is_active" id="is_active" required>
                                     <option value="" selected disabled>Select Status</option>
