@@ -2,6 +2,8 @@
 
 namespace Modules\Product\Entities;
 
+use App\Models\Outlet;
+use App\Models\OutletProduct;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\Product\Notifications\NotifyQuantityAlert;
@@ -47,5 +49,17 @@ class Product extends Model implements HasMedia
 
     public function getProductPriceAttribute($value) {
         return ($value / 100);
+    }
+
+    public function outletProducts()
+    {
+        return $this->hasMany(OutletProduct::class, 'product_id', 'id');
+    }
+
+    public function outlets()
+    {
+        return $this->belongsToMany(Outlet::class, 'outlet_products', 'product_id', 'outlet_id')
+            ->withPivot(['price', 'status'])
+            ->withTimestamps();
     }
 }

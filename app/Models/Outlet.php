@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use Modules\Product\Entities\Product;
 
 class Outlet extends Model
 {
@@ -29,5 +30,17 @@ class Outlet extends Model
     public function manager()
     {
         return $this->belongsTo(User::class, 'manager_id', 'id');
+    }
+
+    public function outletProducts()
+    {
+        return $this->hasMany(OutletProduct::class, 'outlet_id', 'id');
+    }
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'outlet_products', 'outlet_id', 'product_id')
+            ->withPivot(['price', 'status'])
+            ->withTimestamps();
     }
 }
