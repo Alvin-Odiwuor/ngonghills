@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Ingredient;
 use App\Models\IngredientPurchase;
+use App\Models\Outlet;
 use Illuminate\Database\Seeder;
 use Modules\People\Entities\Supplier;
 
@@ -14,8 +15,8 @@ class IngredientPurchaseSeeder extends Seeder
      */
     public function run(): void
     {
-        if (Ingredient::query()->doesntExist() || Supplier::query()->doesntExist()) {
-            $this->command?->warn('Skipping IngredientPurchaseSeeder: ingredients or suppliers are missing.');
+        if (Ingredient::query()->doesntExist() || Supplier::query()->doesntExist() || Outlet::query()->doesntExist()) {
+            $this->command?->warn('Skipping IngredientPurchaseSeeder: ingredients, suppliers, or outlets are missing.');
             return;
         }
 

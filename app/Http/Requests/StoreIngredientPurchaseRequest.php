@@ -24,6 +24,7 @@ class StoreIngredientPurchaseRequest extends FormRequest
         return [
             'ingredient_id' => 'required|integer|exists:ingredients,id',
             'supplier_id' => 'required|integer|exists:suppliers,id',
+            'outlet_id' => 'required|integer|exists:outlets,id',
             'quantity' => 'required|numeric|min:0.001',
             'unit_cost' => 'required|numeric|min:0',
             'total_cost' => 'nullable|numeric|min:0',

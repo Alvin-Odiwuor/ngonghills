@@ -26,6 +26,7 @@
                                 <th>#</th>
                                 <th>Ingredient</th>
                                 <th>Supplier</th>
+                                <th>Outlet</th>
                                 <th>Qty</th>
                                 <th>Unit Cost</th>
                                 <th>Total Cost</th>
@@ -40,6 +41,7 @@
                                     <td>{{ $purchase->id }}</td>
                                     <td>{{ optional($purchase->ingredient)->name ?? '-' }}</td>
                                     <td>{{ optional($purchase->supplier)->supplier_name ?? '-' }}</td>
+                                    <td>{{ optional($purchase->outlet)->name ?? '-' }}</td>
                                     <td>{{ number_format((float) $purchase->quantity, 3) }}</td>
                                     <td>{{ number_format((float) $purchase->unit_cost, 4) }}</td>
                                     <td>{{ number_format((float) $purchase->total_cost, 4) }}</td>
@@ -57,7 +59,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="9" class="text-center">No ingredient purchases found.</td>
+                                    <td colspan="10" class="text-center">No ingredient purchases found.</td>
                                 </tr>
                             @endforelse
                         </tbody>

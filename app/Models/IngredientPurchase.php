@@ -13,6 +13,7 @@ class IngredientPurchase extends Model
     protected $fillable = [
         'ingredient_id',
         'supplier_id',
+        'outlet_id',
         'quantity',
         'unit_cost',
         'total_cost',
@@ -36,5 +37,10 @@ class IngredientPurchase extends Model
     public function supplier()
     {
         return $this->belongsTo(Supplier::class, 'supplier_id', 'id');
+    }
+
+    public function outlet()
+    {
+        return $this->belongsTo(Outlet::class, 'outlet_id', 'id');
     }
 }

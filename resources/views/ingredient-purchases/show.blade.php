@@ -27,6 +27,10 @@
                         <strong>Supplier:</strong>
                         <div>{{ optional($ingredientPurchase->supplier)->supplier_name ?? '-' }}</div>
                     </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Outlet:</strong>
+                        <div>{{ optional($ingredientPurchase->outlet)->name ?? '-' }}</div>
+                    </div>
                     <div class="col-md-3 mb-3">
                         <strong>Quantity:</strong>
                         <div>{{ number_format((float) $ingredientPurchase->quantity, 3) }}</div>

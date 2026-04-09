@@ -55,4 +55,9 @@ class Outlet extends Model
     {
         return $this->hasMany(ProductionRun::class, 'outlet_id', 'id');
     }
+
+    public function ingredientPurchases()
+    {
+        return $this->hasMany(IngredientPurchase::class, 'outlet_id', 'id');
+    }
 }

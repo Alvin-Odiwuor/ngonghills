@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Ingredient;
+use App\Models\Outlet;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Modules\People\Entities\Supplier;
 
@@ -24,6 +25,7 @@ class IngredientPurchaseFactory extends Factory
         return [
             'ingredient_id' => Ingredient::query()->inRandomOrder()->value('id'),
             'supplier_id' => Supplier::query()->inRandomOrder()->value('id'),
+            'outlet_id' => Outlet::query()->inRandomOrder()->value('id'),
             'quantity' => $quantity,
             'unit_cost' => $unitCost,
             'total_cost' => $quantity * $unitCost,

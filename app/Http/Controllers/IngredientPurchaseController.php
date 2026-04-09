@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateIngredientPurchaseRequest;
 use App\Models\Ingredient;
 use App\Models\IngredientPurchase;
 use App\Models\IngredientStockAdjustment;
+use App\Models\Outlet;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -20,7 +21,7 @@ class IngredientPurchaseController extends Controller
     public function index()
     {
         $ingredientPurchases = IngredientPurchase::query()
-            ->with(['ingredient', 'supplier'])
+            ->with(['ingredient', 'supplier', 'outlet'])
             ->orderByDesc('purchase_date')
             ->orderByDesc('id')
             ->paginate(15);
@@ -35,8 +36,9 @@ class IngredientPurchaseController extends Controller
     {
         $ingredients = Ingredient::query()->orderBy('name')->get(['id', 'name', 'unit']);
         $suppliers = Supplier::query()->orderBy('supplier_name')->get(['id', 'supplier_name']);
+        $outlets = Outlet::query()->where('status', 'active')->orderBy('name')->get(['id', 'name']);
 
-        return view('ingredient-purchases.create', compact('ingredients', 'suppliers'));
+        return view('ingredient-purchases.create', compact('ingredients', 'suppliers', 'outlets'));
     }
 
     /**
@@ -64,7 +66,7 @@ class IngredientPurchaseController extends Controller
      */
     public function show(IngredientPurchase $ingredientPurchase)
     {
-        $ingredientPurchase->load(['ingredient', 'supplier']);
+        $ingredientPurchase->load(['ingredient', 'supplier', 'outlet']);
 
         return view('ingredient-purchases.show', compact('ingredientPurchase'));
     }
@@ -76,8 +78,9 @@ class IngredientPurchaseController extends Controller
     {
         $ingredients = Ingredient::query()->orderBy('name')->get(['id', 'name', 'unit']);
         $suppliers = Supplier::query()->orderBy('supplier_name')->get(['id', 'supplier_name']);
+        $outlets = Outlet::query()->where('status', 'active')->orderBy('name')->get(['id', 'name']);
 
-        return view('ingredient-purchases.edit', compact('ingredientPurchase', 'ingredients', 'suppliers'));
+        return view('ingredient-purchases.edit', compact('ingredientPurchase', 'ingredients', 'suppliers', 'outlets'));
     }
 
     /**
