@@ -38,5 +38,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('production-runs', 'ProductionRunController');
     Route::resource('production-run-ingredients', 'ProductionRunIngredientController');
     Route::resource('ingredient-stock-adjustments', 'IngredientStockAdjustmentController');
+    Route::resource('outlets', 'OutletController');
 });
 
