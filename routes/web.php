@@ -34,5 +34,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('ingredients', 'IngredientController');
     Route::resource('ingredient-purchases', 'IngredientPurchaseController');
     Route::resource('recipes', 'RecipeController');
+    Route::resource('recipe-ingredients', 'RecipeIngredientController');
 });
 
